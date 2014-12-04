@@ -6,26 +6,38 @@ import java.util.List;
 import yanfa.Parser;
 import yanfa.WordAndLocation;
 
-public class Analizer {
+public class Analyzer {
 	
 	static int avgSentencesLength = -1;
 
-	public Analizer() {
+	public Analyzer() {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public static int getSentenceLength(String sentences){
+	public static int getSentenceLength(String sentences, boolean includeNumber){
 		String[] words = Parser.parseToWords(sentences);
-		return words.length;
+		if(includeNumber){
+			return words.length;
+		}else{
+			int i = 0;
+			for(String word : words){
+				if(!isContainNumber(word))
+					i++;
+			}
+			return i;
+		}
+				
 	}
 	
-	public static String getLongestSentence(String paragraph){
+	public static String getLongestSentence(String paragraph, boolean includeNumber){
 		int maxLength = Integer.MIN_VALUE;
 		int idx = -1;
 		String[] sentences = Parser.parseToSentences(paragraph);
 		for(int i=0; i<sentences.length; i++){
-			if(sentences[i].length() > maxLength)
+			if(getSentenceLength(sentences[i], includeNumber) > maxLength){
 				idx = i;
+				maxLength = sentences[i].length();
+			}
 		}
 		return sentences[idx];
 	}
@@ -77,8 +89,9 @@ public class Analizer {
 		String[] words = Parser.parseToWords(sentences);
 		int counter = 0;
 		for(String word : words){
-			if(keyWords.contains(word.toLowerCase()))
+			if(keyWords.contains(word.toLowerCase())){
 				counter++;
+			}
 		}
 		return counter;
 	}
@@ -103,6 +116,15 @@ public class Analizer {
 			return true;
 					
 		}
+	}
+	
+	private static boolean isContainNumber(String word){
+		String[] numbers = {"1" , "2", "3", "4", "5", "6", "7", "8", "9", "0"};
+		for(String n : numbers){
+			if(word.contains(n))
+				return true;
+		}
+		return false;
 	}
 
 }
