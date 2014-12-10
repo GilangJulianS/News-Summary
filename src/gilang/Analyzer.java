@@ -45,12 +45,9 @@ public class Analyzer {
 	public static float getAvgSentencesLength(String fullText){
 		if(avgSentencesLength == -1){	
 			int sum = 0;
-			String[] paragraphs = Parser.parseToParagraphs(fullText);
-			for(String paragraph : paragraphs){
-				String[] sentences = Parser.parseToSentences(paragraph);
-				sum += sentences.length;
-			}
-			return (float)sum/(float)paragraphs.length;
+			String[] sentences = Parser.parseToSentences(fullText);
+			String[] words = Parser.parseToWords(fullText);
+			return (float)words.length/(float)sentences.length;
 		}
 		else{
 			return avgSentencesLength;

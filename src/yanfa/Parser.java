@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.text.BreakIterator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -63,7 +64,7 @@ public class Parser {
 	}
 	
 	public static String getNewsInString(String s){
-		String tempString = s.substring(s.indexOf(">>>>>") + 6, s.indexOf("\\Ringkasan\\") - 1);
+		String tempString = s.substring(s.indexOf(">>>>>") + 7, s.indexOf("\\Ringkasan\\") - 1);
 		return tempString;
 	}
 	
@@ -81,9 +82,38 @@ public class Parser {
 		return s;
 	}
 	
+	public static boolean isNumber(String str)  
+	{  
+		try{  
+			int d = Integer.parseInt(str);  
+		}  
+		catch(NumberFormatException nfe) {  
+			return false;  
+		}  
+		return true;  
+	}
+	
 	public static String[] parseToWords(String s){
-		String delims = "[\n .\'\\\"/()]|, |.\n";
-		return s.split(delims);
+		String delims = "[\n ,.\'\\\"/()][\n ,.\'\\\"/()][\n ,.\'\\\"/()]|"
+				+ "[\n ,.\'\\\"/()][\n ,.\'\\\"/()]|"
+				+ "[\n .\'\\\"/()]";
+		String string[] = s.split(delims);
+		List<String> listString = Arrays.asList(string);
+		if(listString.get(0).equals("")){
+			List<String> tempList = new ArrayList<>();
+			for(int i = 1; i < listString.size() - 1; i++){
+				tempList.add(listString.get(i));
+			}
+			listString = tempList;
+		}
+		if(listString.get(listString.size() - 1).length() < 2 && !isNumber(listString.get(listString.size() - 1))){
+			List<String> tempList = new ArrayList<>();
+			for(int i = 0; i < listString.size() - 1; i++){
+				tempList.add(listString.get(i));
+			}
+			listString = tempList;
+		}
+		return listString.toArray(new String[listString.size()]);
 	}
 	
 	public static String[] parseToSentences(String s){
@@ -187,20 +217,25 @@ public class Parser {
 		}
 	    return sb.toString();
 	}
-	
-	public static String getTitle(String fullText){
-		// ----- stub -----
-			return "Anggota  Tim  9  Kasus  Century  Kaget Presiden Tanggapi Pernyataan Antasari";
-	}
-	
+
 	public static void main(String[] args){
-		System.out.println("Title :\n"+ Parser.getTitleInString(readStream("Dataset/King001.txt")));
-		System.out.println("News :\n"+ Parser.getNewsInString(readStream("Dataset/King001.txt")));
-		System.out.println("Summary :\n"+ Parser.getSummaryInString(readStream("Dataset/King001.txt"))+ "\n");
-		Parser parser = new Parser(readStream("Dataset/King001.txt"));
-		parser.printWordAndLocation();
-		for(String s : Parser.parseToParagraphs(Parser.getNewsInString(readStream("Dataset/King001.txt")))){
-			System.out.print("tes : " + s);
+//		System.out.println("Title :\n"+ Parser.getTitleInString(readStream("Dataset/King001.txt")));
+//		System.out.println("News :\n"+ Parser.getNewsInString(readStream("Dataset/King001.txt")));
+//		System.out.println("Summary :\n"+ Parser.getSummaryInString(readStream("Dataset/King001.txt"))+ "\n");
+//		Parser parser = new Parser(readStream("Dataset/King001.txt"));
+//		parser.printWordAndLocation();
+		int n = 0;
+		String[] sentences = Parser.parseToSentences(Parser.getNewsInString(readStream("Dataset/King001.txt")));
+		for(int i = 0; i < sentences.length - 1; i++){
+			n = 0;
+			for(String s : Parser.parseToWords(sentences[i])){
+				if(sentences[i+1].contains(s)){
+					n++;
+				}
+			}
+			if(n > 1){
+				System.out.println("mantab");
+			}
 		}
 	}
 }
