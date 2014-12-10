@@ -139,6 +139,11 @@ public class Parser {
 		}
 	}
 	
+	public static String getTitle(String fullText){
+		// ----- stub -----
+			return "Anggota  Tim  9  Kasus  Century  Kaget Presiden Tanggapi Pernyataan Antasari";
+	}
+	
 	public static void main(String[] args){
 		Parser parser = new Parser("Forum Indonesia untuk Transparansi Anggaran (Fitra) telah menduga PT "
 				+ "Ghalia Indonesia Printing tak akan berhasil menyelesaikan tender naskah ujian nasional."

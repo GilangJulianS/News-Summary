@@ -29,7 +29,7 @@ public class VectorGenerator {
 				List<Float> sentenceVector = vectorSentence(sentence, paragraph);
 				vector.add(sentenceVector);
 				
-				//debug
+//			----- debug ------
 //					System.out.println("Sentence " + i + " : " + sentence);
 //					String[] words = Parser.parseToWords(sentence);
 //					for(String word : words){
@@ -59,26 +59,26 @@ public class VectorGenerator {
 	}
 	
 	public float getFeature1(String sentence, int longestSentence){
-//		debug
+//		------ debug ------
 //			System.out.println("Sentence Length : " + Analizer.getSentenceLength(sentence, false) + " longest length : " + longestSentence);
 		return (float)Analyzer.getSentenceLength(sentence, false)/longestSentence;
 	}
 	
 	public float getFeature2(String sentence, String paragraph){
-//		debug
+//		------ debug ------
 //			System.out.println("position : " + Analyzer.getSentencePosition(sentence, paragraph));
 		return (float)Analyzer.getSentencePosition(sentence, paragraph)/avgSentenceLength;
 	}
 	
 	public float getFeature3(String sentence){
-//		debug
+//		------ debug ------
 //			System.out.println("numeric count : " + Analyzer.getNumericCount(sentence));
 //			System.out.println("total count : " + Analyzer.getSentenceLength(sentence, true));
 		return (float)Analyzer.getNumericCount(sentence)/(float)Analyzer.getSentenceLength(sentence, true);
 	}
 
 	public float getFeature4(String sentence){
-//		debug
+//		----- debug ------
 //			String[] list = {"presiden", "antasari", "ri", "menanggapi", "dpr"};
 //			keyWords = Arrays.asList(list);
 //			System.out.println("#katakunci : " + Analyzer.getMatchKeywords(sentence, keyWords));
