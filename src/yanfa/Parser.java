@@ -1,4 +1,5 @@
 package yanfa;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,7 +9,6 @@ import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.StringTokenizer;
 
 public class Parser {
 
@@ -56,7 +56,7 @@ public class Parser {
 	public WordAndLocation[] getWordAndLocation() {
 		return wordAndLocation;
 	}
-	
+
 	public static String getTitleInString(String s){
 		String tempString = s.substring(0, s.indexOf("\n"));
 		return tempString;
@@ -74,6 +74,7 @@ public class Parser {
 
 	public static String deleteStopWords(String s){
 		String[] stopWords = parseToWords(readStream("Dataset/stopwords.txt"));
+
 		for(String sWords : stopWords){
 			s = s.replace(" "+sWords+" ", "");
 		}
@@ -164,7 +165,6 @@ public class Parser {
 			}
 		}
 	}
-	
 	private static String readStream(String namaFile) {
 		File file = new File(namaFile);
 		StringBuilder sb = new StringBuilder(512);
