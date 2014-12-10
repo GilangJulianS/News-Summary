@@ -1,4 +1,10 @@
 package yanfa;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +14,8 @@ public class Parser {
 
 	private String string;
 	private String cleanString;
+	private String news;
+	private String summary;
 	private String[] words;
 	private String[] sentences;
 	private String[] paragraphs;
@@ -15,11 +23,14 @@ public class Parser {
 	
 	public Parser(String string){
 		this.string = string;
-		cleanString = deleteStopWords(string);
+		news = getNewsInString(string);
+		summary = getSummaryInString(string);
+		
+		cleanString = deleteStopWords(getNewsInString(string));
 		paragraphs = parseToParagraphs(cleanString);
 		sentences = parseToSentences(cleanString);
 		words = parseToWords(cleanString);
-		wordAndLocation = getAllWordLocation(string);
+		wordAndLocation = getAllWordLocation(getNewsInString(string));
 	}
 	
 	public String getString() {
@@ -46,8 +57,24 @@ public class Parser {
 		return wordAndLocation;
 	}
 
+	public static String getTitleInString(String s){
+		String tempString = s.substring(0, s.indexOf("\n"));
+		return tempString;
+	}
+	
+	public static String getNewsInString(String s){
+		String tempString = s.substring(s.indexOf(">>>>>") + 6, s.indexOf("\\Ringkasan\\") - 1);
+		return tempString;
+	}
+	
+	public static String getSummaryInString(String s){
+		String tempString = s.substring(s.indexOf("\\Ringkasan\\") + 13, s.length() - 2);
+		return tempString;
+	}
+
 	public static String deleteStopWords(String s){
-		String[] stopWords = {"ke", "di", "yang", "pada", "untuk", "juga", "akan","dan","kalau","Yang"};
+		String[] stopWords = parseToWords(readStream("Dataset/stopwords.txt"));
+
 		for(String sWords : stopWords){
 			s = s.replace(" "+sWords+" ", "");
 		}
@@ -55,7 +82,7 @@ public class Parser {
 	}
 	
 	public static String[] parseToWords(String s){
-		String delims = "[ ,.'\\\"\n/]+";
+		String delims = "[\n .\'\\\"/()]|, |.\n";
 		return s.split(delims);
 	}
 	
@@ -139,38 +166,41 @@ public class Parser {
 		}
 	}
 	
+	private static String readStream(String namaFile) {
+		File file = new File(namaFile);
+		StringBuilder sb = new StringBuilder(512);
+		try{
+			FileInputStream fileStream = new FileInputStream(file);
+		    try {
+		        Reader r = new InputStreamReader(fileStream, "UTF-8");
+		        int c = 0;
+		        while ((c = r.read()) != -1) {
+		            sb.append((char) c);
+		        }
+		        r.close();
+		    } catch (IOException e) {
+		        throw new RuntimeException(e);
+		    }
+		    fileStream.close();
+		}catch(Exception e){
+			System.out.println("error : " + e);
+		}
+	    return sb.toString();
+	}
+	
 	public static String getTitle(String fullText){
 		// ----- stub -----
 			return "Anggota  Tim  9  Kasus  Century  Kaget Presiden Tanggapi Pernyataan Antasari";
 	}
 	
 	public static void main(String[] args){
-		Parser parser = new Parser("Forum Indonesia untuk Transparansi Anggaran (Fitra) telah menduga PT "
-				+ "Ghalia Indonesia Printing tak akan berhasil menyelesaikan tender naskah ujian nasional."
-				+ "Koordinator Investigasi dan Advokasi Uchok Sky Khadafi menilai proses tender perusahaaan "
-				+ "tersebut ganjil. \"Dari awal saya sudah menduga ini bermasalah,\" katanya saat dihubungi, Ahad, 14 "
-				+ "April 2013.\n"
-				+ "Uchok menyebutkan, dalam lelang, Ghalia menawarkan harga yang lebih tinggi, Rp "
-				+ "22,8 miliar. Sedangkan perusahaan lainnya, PT Aneka Ilmu memberi menawarkan Rp 17 miliar, PT "
-				+ "Jasuindo Tiga Perkasa Rp 21,1 miliar, dan PT Balebat Dedikasi Prima Rp 21,6 miliar. Namun "
-				+ "kementerian Pendidikan dan Kebudayaan tetap memenangkan perusahaan tersebut. Selain itu, "
-				+ "Ghalia ternyata tak hanya mengikuti satu paket lelang. Perusahaan itu juga ikut dalam lelang tiga "
-				+ "paket lainnya.\n"
-				+ "Menurut Uchok, ini merupakan bukti Ghalia tak mempertimbangkan kapasitas "
-				+ "perusahannya. \"Yang penting menang, dan akhirnya bermasalah,\" ujarnya. PT Ghalia Indonesia "
-				+ "Printing adalah perusahaan yang mencetak naskah ujian untuk 11 provinsi. Provinsi tersebut yakni "
-				+ "Kalimantan Selatan, Kalimantan Timur, Sulawesi Utara, Sulawesi Tengah, Sulawesi Selatan, "
-				+ "Sulawesi Tenggara, Bali, Nusa Tenggara Barat, Nusa Tenggara Timur, Gorontalo, dan Sulawesi "
-				+ "Barat. Ghalia mengaku kesulitan memasukkan naskah ke boks per sekolah hingga membuat ujian "
-				+ "nasional tingkat SMA, MA, dan SMK untuk ke-11 provinisi tersebut ditunda. \"Kalau mencetak,"
-				+ "kami sudah selesai, tapi ketika memasukan ke boks per sekolah, itu yang kami kesulitan,\" kata "
-				+ "Direktur Ghalia, Hamzah Lukman.\n"
-				+ "Ujian nasional awalnya akan diselenggarakan serentak Senin "
-				+ "besok, 15 April 2013. Karena terlambat, jadwal untuk Senin, yakni ujian Bahasa Indonesia, "
-				+ "dipindah pekan depan. Untuk Selasa, yakni Bahasa Inggris dan Fisika/Ekonomi, ditunda 23 April "
-				+ "2013. Sementara itu, untuk mata pelajaran Matematika yang seharusnya Rabu, 17 April, digeser "
-				+ "ke hari Jumat, 19 April 2013."
-				+ "");
+		System.out.println("Title :\n"+ Parser.getTitleInString(readStream("Dataset/King001.txt")));
+		System.out.println("News :\n"+ Parser.getNewsInString(readStream("Dataset/King001.txt")));
+		System.out.println("Summary :\n"+ Parser.getSummaryInString(readStream("Dataset/King001.txt"))+ "\n");
+		Parser parser = new Parser(readStream("Dataset/King001.txt"));
 		parser.printWordAndLocation();
+		for(String s : Parser.parseToParagraphs(Parser.getNewsInString(readStream("Dataset/King001.txt")))){
+			System.out.print("tes : " + s);
+		}
 	}
 }

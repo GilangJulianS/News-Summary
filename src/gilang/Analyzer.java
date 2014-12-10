@@ -85,7 +85,7 @@ public class Analyzer {
 		return keyWords;
 	}
 	
-	public static int getMatchKeywords(String sentences, List<String> keyWords){
+	public static int getMatchKeywordsCount(String sentences, List<String> keyWords){
 		String[] words = Parser.parseToWords(sentences);
 		int counter = 0;
 		for(String word : words){
@@ -94,6 +94,43 @@ public class Analyzer {
 			}
 		}
 		return counter;
+	}
+	
+	public static List<String> getMatchKeywords(String sentence, List<String> keyWords){
+		List<String> matched = new ArrayList<String>();
+		String[] words = Parser.parseToWords(sentence);
+		for(String word : words){
+			if(keyWords.contains(word.toLowerCase()) && !matched.contains(word)){
+				matched.add(word);
+			}
+		}
+		return matched;
+	}
+	
+	public static int getIntersection(List<String> list1, List<String> list2){
+		int counter = 0;
+		for(int i=0; i<list1.size(); i++){
+			for(int j=0; j<list2.size(); j++){
+				if(list1.get(i).equals(list2.get(j))){
+					counter++;
+					j = list2.size();
+				}
+			}
+		}
+		return counter;
+	}
+	
+	public static int getUnion(List<String> list1, List<String> list2){
+		List<String> union = new ArrayList<String>();
+		for(String s : list1){
+			if(!union.contains(s))
+				union.add(s);
+		}
+		for(String s : list2){
+			if(!union.contains(s))
+				union.add(s);
+		}
+		return union.size();
 	}
 	
 	public static int getNumericCount(String sentence){
