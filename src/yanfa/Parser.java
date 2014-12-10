@@ -11,8 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import org.w3c.dom.ls.LSInput;
-
 public class Parser {
 
 	private String string;
@@ -197,6 +195,7 @@ public class Parser {
 			}
 		}
 	}
+	
 	private static String readStream(String namaFile) {
 		File file = new File(namaFile);
 		StringBuilder sb = new StringBuilder(512);
@@ -218,7 +217,7 @@ public class Parser {
 		}
 	    return sb.toString();
 	}
-	
+
 	public static void main(String[] args){
 //		System.out.println("Title :\n"+ Parser.getTitleInString(readStream("Dataset/King001.txt")));
 //		System.out.println("News :\n"+ Parser.getNewsInString(readStream("Dataset/King001.txt")));

@@ -1,7 +1,6 @@
 package gilang;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import yanfa.Parser;
@@ -9,9 +8,18 @@ import yanfa.Parser;
 public class VectorGenerator {
 
 	String[] paragraphs;
-	List<String> keyWords;
+	// keywords must be in lowercase!!
+	List<String> keyWords;	
 	float avgSentenceLength;
 	List<List<Float>> vector;
+	
+	// ---- dummy variabel -----
+		String title;
+		
+	// ---- dummy method -----
+		public void setTitle(String newTitle){
+			title = newTitle;
+		}
 	
 	public VectorGenerator(String fullText) {
 		paragraphs = Parser.parseToParagraphs(fullText);
@@ -29,7 +37,7 @@ public class VectorGenerator {
 				List<Float> sentenceVector = vectorSentence(sentence, paragraph);
 				vector.add(sentenceVector);
 				
-				//debug
+//			----- debug ------
 //					System.out.println("Sentence " + i + " : " + sentence);
 //					String[] words = Parser.parseToWords(sentence);
 //					for(String word : words){
@@ -51,7 +59,7 @@ public class VectorGenerator {
 		sentenceVector.add(getFeature2(sentence, paragraph));
 		sentenceVector.add(getFeature3(sentence));
 		sentenceVector.add(getFeature4(sentence));
-		sentenceVector.add(getFeature5(sentence));
+		sentenceVector.add(getFeature5(title, sentence));
 		sentenceVector.add(getFeature6(sentence));
 		sentenceVector.add(getFeature7(sentence));
 		sentenceVector.add(getFeature8(sentence, sentence));
@@ -59,34 +67,41 @@ public class VectorGenerator {
 	}
 	
 	public float getFeature1(String sentence, int longestSentence){
-//		debug
+//		------ debug ------
 //			System.out.println("Sentence Length : " + Analizer.getSentenceLength(sentence, false) + " longest length : " + longestSentence);
 		return (float)Analyzer.getSentenceLength(sentence, false)/longestSentence;
 	}
 	
 	public float getFeature2(String sentence, String paragraph){
-//		debug
+//		------ debug ------
 //			System.out.println("position : " + Analyzer.getSentencePosition(sentence, paragraph));
 		return (float)Analyzer.getSentencePosition(sentence, paragraph)/avgSentenceLength;
 	}
 	
 	public float getFeature3(String sentence){
-//		debug
+//		------ debug ------
 //			System.out.println("numeric count : " + Analyzer.getNumericCount(sentence));
 //			System.out.println("total count : " + Analyzer.getSentenceLength(sentence, true));
 		return (float)Analyzer.getNumericCount(sentence)/(float)Analyzer.getSentenceLength(sentence, true);
 	}
 
 	public float getFeature4(String sentence){
-//		debug
+//		----- debug ------
 //			String[] list = {"presiden", "antasari", "ri", "menanggapi", "dpr"};
 //			keyWords = Arrays.asList(list);
 //			System.out.println("#katakunci : " + Analyzer.getMatchKeywords(sentence, keyWords));
-		return (float)Analyzer.getMatchKeywords(sentence, keyWords)/(float)Analyzer.getSentenceLength(sentence, true);
+		return (float)Analyzer.getMatchKeywordsCount(sentence, keyWords)/(float)Analyzer.getSentenceLength(sentence, true);
 	}
 	
-	public float getFeature5(String sentence){
-		return 0;
+	public float getFeature5(String title, String sentence){
+		List<String> keywordTitle = Analyzer.getMatchKeywords(title, keyWords);
+		List<String> keywordSentence = Analyzer.getMatchKeywords(sentence, keyWords);
+//		----- debug ------
+//			String[] list = {"presiden", "antasari", "ri", "menanggapi", "dpr"};
+//			keyWords = Arrays.asList(list);
+//			System.out.println("intersection : " + Analyzer.getIntersection(keywordTitle, keywordSentence));
+//			System.out.println("union : " + Analyzer.getUnion(keywordTitle, keywordSentence));
+		return (float)Analyzer.getIntersection(keywordTitle, keywordSentence)/(float)Analyzer.getUnion(keywordTitle, keywordSentence);
 	}
 	
 	public float getFeature6(String sentence){
@@ -113,6 +128,8 @@ public class VectorGenerator {
 	public static void main(String[] args){
 		String text = "Anggota  Tim  9  Dewan  Perwakilan  Rakyat RI,  Akbar  Faisal  mengaku  kaget, Presiden RI Susilo Bambang Yudhoyono menanggapi penyataan mantan Ketua KPK Antasari Azhar soal pengucuran dana talangan (bail out) Bank Century pada  Oktober  2008.  Ia  menyesalkan Presiden sampai  menggelar  pernyataan khusus di Istana negara pada Rabu (15/8/2012) malam untuk menanggapi hal tersebut.";
 		VectorGenerator gen = new VectorGenerator(text);
+		// ---- debug ----
+			gen.setTitle("Anggota Tim 9 Kasus Century Kaget Presiden Tanggapi Pernyataan Antasari");
 		List<List<Float>> vector = gen.generateVector();
 		int par = 1;
 		for(List<Float> list : vector){
