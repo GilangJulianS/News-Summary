@@ -223,16 +223,18 @@ public class Parser {
 //		System.out.println("News :\n"+ Parser.getNewsInString(readStream("Dataset/King001.txt")));
 //		System.out.println("Summary :\n"+ Parser.getSummaryInString(readStream("Dataset/King001.txt"))+ "\n");
 //		Parser parser = new Parser(readStream("Dataset/King001.txt"));
-		//parser.printWordAndLocation();
+//		parser.printWordAndLocation();
 		int n = 0;
 		String[] sentences = Parser.parseToSentences(Parser.getNewsInString(readStream("Dataset/King001.txt")));
 		for(int i = 0; i < sentences.length - 1; i++){
-			System.out.println("Kalimat : " + sentences[i]);
-			System.out.println("Kata2nya : ");
 			n = 0;
 			for(String s : Parser.parseToWords(sentences[i])){
-				n++;
-				System.out.println("kata ke-" + n + ": " + s);
+				if(sentences[i+1].contains(s)){
+					n++;
+				}
+			}
+			if(n > 1){
+				System.out.println("mantab");
 			}
 		}
 	}

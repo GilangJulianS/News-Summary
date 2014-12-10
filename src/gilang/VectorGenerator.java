@@ -61,8 +61,8 @@ public class VectorGenerator {
 		sentenceVector.add(getFeature4(sentence));
 		sentenceVector.add(getFeature5(title, sentence));
 		sentenceVector.add(getFeature6(sentence));
-		sentenceVector.add(getFeature7(sentence));
-		sentenceVector.add(getFeature8(sentence, sentence));
+//		sentenceVector.add(getFeature7(sentence));
+//		sentenceVector.add(getFeature8(sentence, sentence));
 		return sentenceVector;
 	}
 	
@@ -108,13 +108,48 @@ public class VectorGenerator {
 		return 0;
 	}
 	
-	public float getFeature7(String sentence){
-		return 0;
+	public List<Integer> getFeature7(String news){
+		int n = 0;
+		List<Integer> listVector = new ArrayList<>();
+		listVector.add(0);
+		String[] sentences = Parser.parseToSentences(news);
+		for(int i = 1; i < sentences.length; i++){
+			n = 0;
+			for(String s : Parser.parseToWords(sentences[i])){
+				if(sentences[i-1].contains(s)){
+					n++;
+				}
+			}
+			if(n > 1){
+				listVector.add(1);
+			}
+			else{
+				listVector.add(0);
+			}
+		}
+		return listVector;
 	}
 	
-	public float getFeature8(String sentence, String nextSentence){
-		
-		return 0;
+	public List<Integer> getFeature8(String news){
+		int n = 0;
+		List<Integer> listVector = new ArrayList<>();
+		String[] sentences = Parser.parseToSentences(news);
+		for(int i = 0; i < sentences.length - 1; i++){
+			n = 0;
+			for(String s : Parser.parseToWords(sentences[i])){
+				if(sentences[i+1].contains(s)){
+					n++;
+				}
+			}
+			if(n > 1){
+				listVector.add(1);
+			}
+			else{
+				listVector.add(0);
+			}
+		}
+		listVector.add(0);
+		return listVector;
 	}
 	
 	public int getLabel(String sentence, String summary){
