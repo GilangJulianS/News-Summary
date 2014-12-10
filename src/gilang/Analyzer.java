@@ -107,6 +107,24 @@ public class Analyzer {
 		return matched;
 	}
 	
+	public static List<String> getMatchKeywords(String paragraph, List<String> keyWords, int exclSentence){
+		int counter = 0;
+		List<String> matched = new ArrayList<String>();
+		String[] sentences = Parser.parseToSentences(paragraph);
+		for(String sentence : sentences){
+			if(counter != exclSentence){
+				String[] words = Parser.parseToWords(sentence);
+				for(String word : words){
+					if(keyWords.contains(word.toLowerCase()) && !matched.contains(word)){
+						matched.add(word);
+					}
+				}
+			}
+			counter++;
+		}
+		return matched;
+	}
+	
 	public static int getIntersection(List<String> list1, List<String> list2){
 		int counter = 0;
 		for(int i=0; i<list1.size(); i++){

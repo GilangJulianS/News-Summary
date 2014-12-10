@@ -32,10 +32,10 @@ public class VectorGenerator {
 	public List<List<Float>> generateVector(){
 		List<List<Float>> vector = new ArrayList<List<Float>>();
 		for(String paragraph : paragraphs){
-			int i = 1;
+			int i = 0;
 			String[] sentences = Parser.parseToSentences(paragraph);
 			for(String sentence : sentences){
-				List<Float> sentenceVector = vectorSentence(sentence, paragraph);
+				List<Float> sentenceVector = vectorSentence(sentence, paragraph, i);
 				vector.add(sentenceVector);
 				
 //			----- debug ------
@@ -53,7 +53,7 @@ public class VectorGenerator {
 		return vector;
 	}
 	
-	public List<Float> vectorSentence(String sentence, String paragraph){
+	public List<Float> vectorSentence(String sentence, String paragraph, int sentenceNumber){
 		int longestSentence = Analyzer.getSentenceLength(Analyzer.getLongestSentence(paragraph, false), false);
 		List<Float> sentenceVector = new ArrayList<>();
 		sentenceVector.add(getFeature1(sentence, longestSentence));
@@ -61,7 +61,7 @@ public class VectorGenerator {
 		sentenceVector.add(getFeature3(sentence));
 		sentenceVector.add(getFeature4(sentence));
 		sentenceVector.add(getFeature5(title, sentence));
-		sentenceVector.add(getFeature6(sentence));
+		sentenceVector.add(getFeature6(paragraph, sentence, sentenceNumber));
 		sentenceVector.add(getFeature7(sentence));
 		sentenceVector.add(getFeature8(sentence));
 		return sentenceVector;
@@ -105,8 +105,23 @@ public class VectorGenerator {
 		return (float)Analyzer.getIntersection(keywordTitle, keywordSentence)/(float)Analyzer.getUnion(keywordTitle, keywordSentence);
 	}
 	
-	public float getFeature6(String sentence){
-		return 0;
+	public float getFeature6(String paragraph, String sentence, int sentenceNumber){
+//		----- debug ------
+			String[] list = {"presiden", "ri", "dpr"};
+			keyWords = Arrays.asList(list);
+		List<String> currentMatch = Analyzer.getMatchKeywords(sentence, keyWords);
+		List<String> anotherMatch = Analyzer.getMatchKeywords(paragraph, keyWords, sentenceNumber);
+		System.out.println("current:");
+		for(String s : currentMatch){
+			System.out.println(s);
+		}
+		System.out.println("another:");
+		for(String s : anotherMatch){
+			System.out.println(s);
+		}
+		System.out.println("intersection : " + Analyzer.getIntersection(currentMatch, anotherMatch));
+		System.out.println("union : " + Analyzer.getUnion(currentMatch, anotherMatch));
+		return (float)Analyzer.getIntersection(currentMatch, anotherMatch)/(float)Analyzer.getUnion(currentMatch, anotherMatch);
 	}
 	
 	public float getFeature7(String sentence){
@@ -118,9 +133,9 @@ public class VectorGenerator {
 	}
 	
 	public static void main(String[] args){
-		String text = "Anggota  Tim  9  Dewan  Perwakilan  Rakyat RI,  Akbar  Faisal  mengaku  kaget, Presiden RI Susilo Bambang Yudhoyono menanggapi penyataan mantan Ketua KPK Antasari Azhar soal pengucuran dana talangan (bail out) Bank Century pada  Oktober  2008.  Ia  menyesalkan Presiden sampai  menggelar  pernyataan khusus di Istana negara pada Rabu (15/8/2012) malam untuk menanggapi hal tersebut.";
+		String text = "Anggota Tim 9 DPR RI, Akbar Faisal mengaku kaget, Presiden RI Susilo Bambang Yudhoyono menanggapi penyataan mantan Ketua KPK Antasari Azhar soal pengucuran dana talangan (bail out) Bank Century pada Oktober 2008. Ia menyesalkan Presiden sampai menggelar pernyataan khusus di Istana negara pada Rabu (15/8/2012) malam untuk menanggapi hal tersebut. hal tersebut. Presiden diduga secara cepat memberikan tanggapan, untuk menghindari adanya interupsi dari anggota DPR dalam rapat gabungan di DPR hari ini";
 		VectorGenerator gen = new VectorGenerator(text);
-		// ---- debug ----
+//		---- debug ----
 			gen.setTitle("Anggota Tim 9 Kasus Century Kaget Presiden Tanggapi Pernyataan Antasari");
 		List<List<Float>> vector = gen.generateVector();
 		int par = 1;
