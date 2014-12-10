@@ -54,7 +54,7 @@ public class VectorGenerator {
 		sentenceVector.add(getFeature5(sentence));
 		sentenceVector.add(getFeature6(sentence));
 		sentenceVector.add(getFeature7(sentence));
-		sentenceVector.add(getFeature8(sentence));
+		sentenceVector.add(getFeature8(sentence, sentence));
 		return sentenceVector;
 	}
 	
@@ -97,8 +97,17 @@ public class VectorGenerator {
 		return 0;
 	}
 	
-	public float getFeature8(String sentence){
+	public float getFeature8(String sentence, String nextSentence){
+		
 		return 0;
+	}
+	
+	public int getLabel(String sentence, String summary){
+		int label = 0;
+		if(summary.contains(sentence)){
+			label = 1;
+		}
+		return label;
 	}
 	
 	public static void main(String[] args){
